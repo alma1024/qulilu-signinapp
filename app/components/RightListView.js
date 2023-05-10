@@ -57,20 +57,29 @@ const ShowNextButton = ({ onPress, title, arrow, roomIsBusy }) => {
   );
 }
 
-const SignInView = ({ roomIsBusy, meetingList, navigation }) => {
+const SignInView = ({ currentMeeting, nextMeeting, navigation }) => {
+  const roomIsBusy = !!currentMeeting;
   // TODO 背景模糊效果
   const onPress = () => {
     navigation.navigate('Signup', {name: 'Jane'})
   }
   const [buttonVisible, setButtonVisible] = useState(false);
   useEffect(() => {
-    const nextMeeting = meetingList[0];
     if (roomIsBusy) {
-      setButtonVisible(true);
+      const signStart = new Date(currentMeeting.startSignTime).valueOf();
+      const signEnd = new Date(currentMeeting.endSignTime).valueOf();
+      const now = new Date().valueOf();
+      const canSign = now >= signStart && now <= signEnd;
+      setButtonVisible(canSign);
+    } else if (nextMeeting) {
+      const signStart = new Date(nextMeeting.startSignTime).valueOf();
+      const now = new Date().valueOf();
+      const canSign = now >= signStart;
+      setButtonVisible(canSign);
     } else {
       setButtonVisible(false);
     }
-  }, [roomIsBusy, meetingList])
+  }, [roomIsBusy, nextMeeting])
   if (!buttonVisible) {
     return null
   }
@@ -83,7 +92,7 @@ const SignInView = ({ roomIsBusy, meetingList, navigation }) => {
   );
 }
 
-export default function RightListView({ currentMeeting, meetingList, navigation }) {
+export default function RightListView({ currentMeeting, nextMeeting, meetingList, navigation }) {
   const roomIsBusy = !!currentMeeting;
   const hasNext = meetingList.length > 0;
   const [nextVisible, setNextVisible] = useState(false)
@@ -110,7 +119,14 @@ export default function RightListView({ currentMeeting, meetingList, navigation 
         {
           meetingList.map((data) => <ListItem rowData={data} key={data.id} />)
         }
-        <ShowNextButton onPress={roomIsBusy ? hideNext : null} title={roomIsBusy ? "到底了 收起" : '- 到底了 -'} arrow="up" roomIsBusy={roomIsBusy} />
+        {meetingList.length > 1 ? (
+          <ShowNextButton
+            onPress={roomIsBusy ? hideNext : null}
+            title={roomIsBusy ? "到底了 收起" : '- 到底了 -'}
+            arrow="up"
+            roomIsBusy={roomIsBusy}
+          />
+        ) : null}
       </>
 
     ) : !roomIsBusy ? (
@@ -148,7 +164,7 @@ export default function RightListView({ currentMeeting, meetingList, navigation 
           nextVisible ? nextListContent : showNextButton
         }
       </ScrollView>
-      <SignInView roomIsBusy={roomIsBusy} meetingList={meetingList} navigation={navigation} />
+      <SignInView currentMeeting={currentMeeting} nextMeeting={nextMeeting} navigation={navigation} />
     </View>
   );
 }

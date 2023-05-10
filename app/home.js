@@ -36,7 +36,7 @@ const testMeeting1 = {
   "endMeetingTime": "2023-05-10T19:00:00",
   "userIds": "1000001",
   "meetingRoomId": "2",
-  "startSignTime": "2023-05-10T18:00:00",
+  "startSignTime": "2023-05-10T17:00:00",
   "endSignTime": "2023-05-10T19:00:00",
   "reason": null,
   "status": "1",
@@ -75,7 +75,8 @@ export default function Home({ navigation }) {
         console.log('data.error: ', data)
       } else if (data.data) {
         // const meetingListData = data.data;
-        const meetingListData = data.data.concat([testMeeting, testMeeting1]); // jest for test
+        const meetingListData = data.data.concat([testMeeting1]); // jest for test
+        // const meetingListData = data.data.concat([testMeeting, testMeeting1]); // jest for test
         const now = new Date().valueOf();
         const currentMeetingData = meetingListData.find(item => new Date(item.startMeetingTime).valueOf() <= now && new Date(item.endMeetingTime).valueOf() >= now)
         const nextListData = meetingListData.filter(item => new Date(item.startMeetingTime).valueOf() >= now)
@@ -105,6 +106,7 @@ export default function Home({ navigation }) {
 
 
   useEffect(() => {
+    // TODO 修改会议室名称
     setRoomData({ title: '会议室 101' })
   }, [])
 
@@ -114,7 +116,7 @@ export default function Home({ navigation }) {
       {!isReady && <SplashScreen />}
       <View style={styles.container}>
         <LeftMainView currentMeeting={currentMeeting} nextMeeting={nextMeeting} roomData={roomData} />
-        <RightListView currentMeeting={currentMeeting} meetingList={meetingList} navigation={navigation} />
+        <RightListView currentMeeting={currentMeeting} nextMeeting={nextMeeting} meetingList={meetingList} navigation={navigation} />
       </View>
     </View>
   );

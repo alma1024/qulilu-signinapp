@@ -46,7 +46,7 @@ const MeetingDescription = ({ currentMeeting, nextMeeting }) => {
       const to = getMeetingTimeStr(currentMeeting.endMeetingTime);
       currentInfo = currentMeeting ? `${from} - ${to}，还剩${toEnd}结束…` : ''
     }
-    const info = nextMeeting ? `下个会议 ${nextMeeting.from} 开始` : '今天后续无会议';
+    const info = nextMeeting ? `下个会议 ${getMeetingTimeStr(nextMeeting.startMeetingTime)} 开始` : '今天后续无会议';
     return roomIsBusy ? currentInfo : info
   }
   useEffect(() => {

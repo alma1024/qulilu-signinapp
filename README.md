@@ -1,11 +1,11 @@
-# Expo Router Example
+# 锦江瞿溪路办公大楼会议签到APP
 
 Use [`expo-router`](https://expo.github.io/router) to build native navigation using files in the `app/` directory.
 
-## 🚀 How to use
+## 🚀 How to run
 
 ```sh
-npx create-react-native-app -t with-router
+npx expo start
 ```
 
 ## 📝 Notes

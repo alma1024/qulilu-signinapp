@@ -6,12 +6,13 @@ import SignupScreen from './signup';
 
 const Stack = createNativeStackNavigator();
 
+//   navigationBar={null} navigationBarHidden={true}
 export default function App() {
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} navigationBarHidden />
+        <Stack.Screen name="Signup" component={SignupScreen} navigationBarHidden />
       </Stack.Navigator>
     </NavigationContainer>
   );

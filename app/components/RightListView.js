@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
+import React, { useEffect, useState, useCallback } from 'react';
+import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
-import { getMeetingTimeStr } from "./utils";
+import { getMeetingTimeStr } from '../utils';
 // import { BlurView } from 'expo-blur';
 
 const Empty = () => {
@@ -10,29 +10,31 @@ const Empty = () => {
       <ExpoImage source={require('../images/empty.svg')} style={{ width: 79, height: 66 }} />
       <Text style={styles.emptyText}>今天后续无会议</Text>
     </View>
-  )
-}
+  );
+};
 
 const ListTitle = ({ roomIsBusy }) => {
-  const icon = roomIsBusy ? require('../images/Next-blue.svg') : require('../images/Next-orange.svg')
-  const title = roomIsBusy ? '正在进行的会议…' : '今天后续会议…'
+  const icon = roomIsBusy ? require('../images/next-blue.svg') : require('../images/next-orange.svg');
+  const title = roomIsBusy ? '正在进行的会议…' : '今天后续会议…';
   return (
     <View style={{ ...styles.iconTitleRow, marginVertical: 14 }}>
       <ExpoImage source={icon} style={{ width: 24, height: 24 }} />
       <Text style={{ ...styles.whiteText, lineHeight: 22, marginLeft: 4 }}>{title}</Text>
     </View>
-  )
-}
+  );
+};
 
 const ListItem = ({ rowData, bottomBordered }) => {
-  const avatar = rowData.avatar ?? require('../images/avatar.svg')
+  const avatar = rowData.avatar ?? require('../images/avatar.svg');
   const from = getMeetingTimeStr(rowData.startMeetingTime);
   const to = getMeetingTimeStr(rowData.endMeetingTime);
   return (
     <View style={{ ...styles.listRow, borderBottomWidth: bottomBordered ? 1 : 0 }}>
       <View style={styles.iconTitleRow}>
-        <ExpoImage source={require('../images/Clock.svg')} style={{ width: 24, height: 24 }} />
-        <Text style={{ ...styles.whiteText, marginLeft: 6, fontSize: 21 }}>Today, {from} - {to}</Text>
+        <ExpoImage source={require('../images/clock.svg')} style={{ width: 24, height: 24 }} />
+        <Text style={{ ...styles.whiteText, marginLeft: 6, fontSize: 21 }}>
+          Today, {from} - {to}
+        </Text>
       </View>
       <View style={{ width: 320, marginTop: 6 }}>
         <Text style={{ ...styles.whiteText, fontSize: 21 }}>{rowData.name}</Text>
@@ -44,25 +46,25 @@ const ListItem = ({ rowData, bottomBordered }) => {
         <Text style={{ ...styles.whiteText, marginLeft: 8, lineHeight: 22 }}>创建人, {rowData.applicant}</Text>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const ShowNextButton = ({ onPress, title, arrow, roomIsBusy }) => {
-  const icon = arrow === 'up' ? require('../images/up.svg') : require('../images/Next-outline.svg');
+  const icon = arrow === 'up' ? require('../images/up.svg') : require('../images/next-outline.svg');
   return (
     <Pressable style={styles.button} onPress={onPress}>
       <Text style={styles.buttonText}>{title}</Text>
-      {roomIsBusy ? <ExpoImage source={icon} style={{width: 24, height: 24}}/> : null}
+      {roomIsBusy ? <ExpoImage source={icon} style={{ width: 24, height: 24 }} /> : null}
     </Pressable>
   );
-}
+};
 
 const SignInView = ({ currentMeeting, nextMeeting, navigation }) => {
   const roomIsBusy = !!currentMeeting;
   // TODO 背景模糊效果
   const onPress = () => {
-    navigation.navigate('Signup', {name: 'Jane'})
-  }
+    navigation.navigate('Signup', { currentMeeting, nextMeeting });
+  };
   const [buttonVisible, setButtonVisible] = useState(false);
   useEffect(() => {
     if (roomIsBusy) {
@@ -79,9 +81,9 @@ const SignInView = ({ currentMeeting, nextMeeting, navigation }) => {
     } else {
       setButtonVisible(false);
     }
-  }, [roomIsBusy, nextMeeting])
+  }, [roomIsBusy, nextMeeting]);
   if (!buttonVisible) {
-    return null
+    return null;
   }
   return (
     <View style={styles.signInView} tint="dark" intensity={90}>
@@ -90,18 +92,18 @@ const SignInView = ({ currentMeeting, nextMeeting, navigation }) => {
       </Pressable>
     </View>
   );
-}
+};
 
 export default function RightListView({ currentMeeting, nextMeeting, meetingList, navigation }) {
   const roomIsBusy = !!currentMeeting;
   const hasNext = meetingList.length > 0;
-  const [nextVisible, setNextVisible] = useState(false)
-  const showNext = useCallback(() => setNextVisible(true), [])
-  const hideNext = useCallback(() => setNextVisible(false), [])
+  const [nextVisible, setNextVisible] = useState(false);
+  const showNext = useCallback(() => setNextVisible(true), []);
+  const hideNext = useCallback(() => setNextVisible(false), []);
 
   useEffect(() => {
     setNextVisible(!roomIsBusy);
-  }, [roomIsBusy])
+  }, [roomIsBusy]);
 
   let timer;
   // 清理计时器
@@ -111,31 +113,28 @@ export default function RightListView({ currentMeeting, nextMeeting, meetingList
         clearInterval(timer);
       }
     };
-  }, [])
-  const nextListContent = (
-    hasNext ? (
-      <>
-        <ListTitle />
-        {
-          meetingList.map((data) => <ListItem rowData={data} key={data.id} />)
-        }
-        {meetingList.length > 1 ? (
-          <ShowNextButton
-            onPress={roomIsBusy ? hideNext : null}
-            title={roomIsBusy ? "到底了 收起" : '- 到底了 -'}
-            arrow="up"
-            roomIsBusy={roomIsBusy}
-          />
-        ) : null}
-      </>
-
-    ) : !roomIsBusy ? (
-      <View style={styles.container}>
-        <Empty />
-      </View>
-    ) : null
-  );
-  const showNextButton = (hasNext && !nextVisible) ? <ShowNextButton onPress={showNext} title="查看后续会议" /> : null;
+  }, []);
+  const nextListContent = hasNext ? (
+    <>
+      <ListTitle />
+      {meetingList.map((data) => (
+        <ListItem rowData={data} key={data.id} />
+      ))}
+      {roomIsBusy || meetingList.length > 1 ? (
+        <ShowNextButton
+          onPress={roomIsBusy ? hideNext : null}
+          title={roomIsBusy ? '到底了 收起' : '- 到底了 -'}
+          arrow="up"
+          roomIsBusy={roomIsBusy}
+        />
+      ) : null}
+    </>
+  ) : !roomIsBusy ? (
+    <View style={styles.container}>
+      <Empty />
+    </View>
+  ) : null;
+  const showNextButton = hasNext && !nextVisible ? <ShowNextButton onPress={showNext} title="查看后续会议" /> : null;
 
   const onScrollEndDrag = () => {
     if (timer) {
@@ -144,25 +143,20 @@ export default function RightListView({ currentMeeting, nextMeeting, meetingList
     if (nextVisible) {
       // 30 秒不操作，自动收起
       timer = setTimeout(() => {
-        setNextVisible(false)
-      }, 1000 * 30)
+        setNextVisible(false);
+      }, 1000 * 30);
     }
-
-  }
+  };
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.contentContainer} onScrollEndDrag={onScrollEndDrag}>
-        {
-          roomIsBusy ? (
-            <>
-              <ListTitle roomIsBusy />
-              <ListItem rowData={currentMeeting} bottomBordered={nextVisible} />
-            </>
-          ) : null
-        }
-        {
-          nextVisible ? nextListContent : showNextButton
-        }
+        {roomIsBusy ? (
+          <>
+            <ListTitle roomIsBusy />
+            <ListItem rowData={currentMeeting} bottomBordered={nextVisible} />
+          </>
+        ) : null}
+        {nextVisible ? nextListContent : showNextButton}
       </ScrollView>
       <SignInView currentMeeting={currentMeeting} nextMeeting={nextMeeting} navigation={navigation} />
     </View>
@@ -172,20 +166,21 @@ export default function RightListView({ currentMeeting, nextMeeting, meetingList
 const styles = StyleSheet.create({
   contentContainer: {
     paddingTop: 200,
-    paddingBottom: 40,
+    paddingBottom: 220,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgb(23, 29, 38)'
+    backgroundColor: 'rgb(23, 29, 38)',
   },
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: 'rgb(23, 29, 38)'
+    backgroundColor: 'rgb(23, 29, 38)',
   },
   emptyContainer: {
     flexDirection: 'column',
     alignItems: 'center',
+    paddingTop: 100,
   },
   emptyText: {
     marginTop: 14,
@@ -209,20 +204,19 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     borderStyle: 'dashed',
     borderTopWidth: 1,
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
   avatarBorder: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 48,
-    marginBottom: 180,
     padding: 0,
     elevation: 0,
     backgroundColor: 'transparent',
@@ -244,7 +238,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderStyle: 'solid',
     borderColor: 'rgba(245, 249, 255, 0.1)',
-    backgroundColor: 'rgba(23, 29, 38, 0.9)'
+    backgroundColor: 'rgba(23, 29, 38, 0.9)',
   },
   signInButton: {
     paddingVertical: 17,
@@ -259,5 +253,5 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontSize: 18,
     color: '#478bff',
-  }
+  },
 });

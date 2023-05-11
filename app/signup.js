@@ -1,21 +1,28 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from 'react-native';
+import LeftDetailView from './components/LeftDetailView';
+import ScanView from './components/ScanView';
 
 export default function Signup({ navigation, route }) {
-  // console.log(route, route?.params?.name)
-  const onPress = () => {
-    navigation.navigate('Home')
-  }
+  const { currentMeeting, nextMeeting } = route.params;
+  const backToHome = () => {
+    navigation.navigate('Home');
+  };
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Sign up {route?.params?.name ?? '=='}</Text>
-      <Pressable style={styles.signInButton} onPress={onPress}>
-        <Text style={styles.signInButtonText}>返回首页</Text>
-      </Pressable>
+      <View style={styles.container}>
+        <LeftDetailView currentMeeting={currentMeeting} nextMeeting={nextMeeting} />
+        <ScanView backToHome={backToHome} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
   signInButton: {
     paddingVertical: 17,
     width: 144,
@@ -29,5 +36,5 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontSize: 18,
     color: '#478bff',
-  }
+  },
 });

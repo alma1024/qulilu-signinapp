@@ -3,10 +3,12 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as FaceDetector from 'expo-face-detector';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import TimeView from './TimeView';
 // import { LinearGradient } from 'expo-linear-gradient';
 import { Image as ExpoImage } from 'expo-image/build/Image';
 import Toast, { DURATION } from 'react-native-easy-toast';
+import * as Crypto from 'expo-crypto';
+import { appid, secret_key } from '../constants';
+import TimeView from './TimeView';
 
 // 人脸识别框
 const FaceBorder = ({ data }) => {
@@ -210,6 +212,24 @@ export default function ScanView({ backToHome, currentMeeting }) {
     backToHome();
   };
 
+  // 获取 secretKey
+  const [secretKey, setSecretKey] = useState('');
+  useEffect(() => {
+    const updateSecret = async () => {
+      const UUID = Crypto.randomUUID();
+      const timestamp = new Date().valueOf();
+      const tokenStr = `appid=${appid},timestamp=${timestamp},once=${UUID},secret=${secret_key}`;
+      const tokenMd5 = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.MD5, tokenStr);
+      const url = `https://kapi.cityservice.com.cn/v1/app/updateQrKey?timestamp=${timestamp}&appid=${appid}&once=${UUID}&token=${tokenMd5}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const _secretKey = data.data.list?.[0]?.qrSecretKey;
+      setSecretKey(_secretKey);
+    };
+    updateSecret();
+  }, []);
+  console.log('secretKey: ', secretKey);
+
   // 成功后显示签到成功提示（3秒后自动消失），下定时器，30秒未扫描到人脸信息，主动返回主页面
   const fetchPhoto = async (uri) => {
     console.log('pic', uri);
@@ -217,29 +237,24 @@ export default function ScanView({ backToHome, currentMeeting }) {
     setLoading(true);
     // TODO 调接口
     const url = `https://kapi.cityservice.com.cn/v1/app/meeting/info`; // fake
-    try {
-      const res = await fetch(url);
-      console.log(res.status, 'fetchPhoto - 1', cameraType);
-    } catch (error) {
-      console.log(error.status, 'fetchPhoto - 2', cameraType);
-    }
+    const res = await fetch(url);
+    const data = await res.json();
+    console.log(data, 'fetchPhoto - ', cameraType);
     if (cameraType !== 'face') {
       return;
     }
     fetchCallback();
   };
+
   const fetchQr = async (qr) => {
     console.log('qr', qr);
     toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     setLoading(true);
     // TODO 调接口
     const url = `https://kapi.cityservice.com.cn/v1/app/meeting/info`; // fake
-    try {
-      const res = await fetch(url);
-      console.log(res.status, 'fetchQr - 1', cameraType);
-    } catch (error) {
-      console.log(error.status, 'fetchQr - 2', cameraType);
-    }
+    const res = await fetch(url);
+    const data = await res.json();
+    console.log(data, 'fetchQr - ', cameraType);
     if (cameraType !== 'qr') {
       return;
     }

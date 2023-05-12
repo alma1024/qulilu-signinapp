@@ -2,12 +2,17 @@
 
 Use [`expo-router`](https://expo.github.io/router) to build native navigation using files in the `app/` directory.
 
-## 🚀 How to run
+## 🚀 运行
 
 ```sh
 npx expo start
 ```
 
+## ! 如果网络条件不佳，可以使用离线模式运行
+
+```sh
+npx expo start --offline
+```
 ## 📝 Notes
 
 - [Expo Router: Docs](https://expo.github.io/router)

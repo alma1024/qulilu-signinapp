@@ -6,12 +6,13 @@ export default function Signup({ navigation, route }) {
   const { currentMeeting, nextMeeting } = route.params;
   const backToHome = () => {
     navigation.navigate('Home');
+    // navigation.goBack();
   };
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <View style={styles.container}>
         <LeftDetailView currentMeeting={currentMeeting} nextMeeting={nextMeeting} />
-        <ScanView backToHome={backToHome} />
+        <ScanView currentMeeting={currentMeeting} backToHome={backToHome} />
       </View>
     </View>
   );

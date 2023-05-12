@@ -2,6 +2,13 @@
 
 Use [`expo-router`](https://expo.github.io/router) to build native navigation using files in the `app/` directory.
 
+## 安装依赖
+
+```sh
+npm install
+```
+
+
 ## 🚀 运行
 
 ```sh
@@ -13,6 +20,19 @@ npx expo start
 ```sh
 npx expo start --offline
 ```
+
+## 线上打包
+
+详见:
+
+https://docs.expo.dev/build/setup/
+
+https://docs.expo.dev/build-reference/apk/
+
+```sh
+eas build -p android --profile preview
+```
+
 ## 📝 Notes
 
 - [Expo Router: Docs](https://expo.github.io/router)

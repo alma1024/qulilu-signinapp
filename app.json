@@ -25,6 +25,14 @@
           "initialOrientation": "LANDSCAPE"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ee162ec7-d75f-4ae9-bb6e-a0f1867b80ca"
+      }
+    },
+    "android": {
+      "package": "com.yue.zhang.signupapp1"
+    }
   }
 }

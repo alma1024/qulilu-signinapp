@@ -14,7 +14,7 @@ const MeetingTitle = ({ data }) => {
 };
 
 const MeetingDescription = ({ data }) => {
-  const avatar = data.avatar ?? require('../images/avatar-white.svg');
+  const avatar = data.meetingUserAvatars ?? require('../images/avatar-white.svg');
   const from = getMeetingTimeStr(data.startMeetingTime);
   const to = getMeetingTimeStr(data.endMeetingTime);
   return (

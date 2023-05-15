@@ -25,7 +25,7 @@ const ListTitle = ({ roomIsBusy }) => {
 };
 
 const ListItem = ({ rowData, bottomBordered }) => {
-  const avatar = rowData.avatar ?? require('../images/avatar.svg');
+  const avatar = rowData.meetingUserAvatars ?? require('../images/avatar.svg');
   const from = getMeetingTimeStr(rowData.startMeetingTime);
   const to = getMeetingTimeStr(rowData.endMeetingTime);
   return (

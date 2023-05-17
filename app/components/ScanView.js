@@ -4,7 +4,7 @@ import { Camera } from 'expo-camera';
 import * as FaceDetector from 'expo-face-detector';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 // import { LinearGradient } from 'expo-linear-gradient';
-import { Image as ExpoImage } from 'expo-image/build/Image';
+import { Image as ExpoImage } from 'expo-image';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import * as Crypto from 'expo-crypto';
 import { appid, secret_key } from '../constants';

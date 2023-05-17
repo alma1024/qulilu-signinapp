@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import RoomName from './RoomName';
 import TimeView from './TimeView';
-import { Image as ExpoImage } from 'expo-image/build/Image';
+import { Image as ExpoImage } from 'expo-image';
 import React from 'react';
 import { getMeetingTimeStr } from '../utils';
 

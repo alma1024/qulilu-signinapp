@@ -228,22 +228,44 @@ export default function ScanView({ backToHome, currentMeeting }) {
     };
     updateSecret();
   }, []);
-  console.log('secretKey: ', secretKey);
 
   // 成功后显示签到成功提示（3秒后自动消失），下定时器，30秒未扫描到人脸信息，主动返回主页面
   const fetchPhoto = async (uri) => {
     console.log('pic', uri);
+    const formData = new FormData();
+    formData.append('source', {
+      name: 'test',
+      type: 'multipart/form-data',
+      uri: uri,
+    });
+    // test
+    // formData.append('target', {
+    //   name: 'test1',
+    //   type: 'multipart/form-data',
+    //   uri: uri,
+    // });
+    // formData.append('target', currentMeeting.meetingUserAvatars ?? '');
     toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     setLoading(true);
-    // TODO 调接口
-    const url = `https://kapi.cityservice.com.cn/v1/app/meeting/info`; // fake
-    const res = await fetch(url);
-    const data = await res.json();
-    console.log(data, 'fetchPhoto - ', cameraType);
-    if (cameraType !== 'face') {
-      return;
+    const url = 'https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check';
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Accept: '*/*',
+          'Content-type': 'multipart/form-data',
+        },
+        body: formData
+      });
+      const data = await res.json();
+      console.log('fetch res', data, 'fetchPhoto - ');
+      if (cameraType !== 'face') {
+        return;
+      }
+      fetchCallback();
+    } catch (e) {
+      console.log('upload catch error: ', e)
     }
-    fetchCallback();
   };
 
   const fetchQr = async (qr) => {

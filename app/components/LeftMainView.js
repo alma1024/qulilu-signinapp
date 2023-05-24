@@ -67,7 +67,7 @@ const MeetingDescription = ({ currentMeeting, nextMeeting }) => {
 const QrCode = () => {
   return (
     <View style={styles.qrCode}>
-      <ExpoImage source={require('../images/qr-test.jpg')} style={{ width: 96, height: 96 }} />
+      <ExpoImage source={require('../images/bookQr.png')} style={{ width: 96, height: 96 }} />
       <Text style={styles.qrInfo}>扫码预约会议</Text>
     </View>
   );

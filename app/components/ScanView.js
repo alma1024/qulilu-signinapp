@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as FaceDetector from 'expo-face-detector';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { manipulateAsync } from 'expo-image-manipulator';
 // import { LinearGradient } from 'expo-linear-gradient';
 import { Image as ExpoImage } from 'expo-image';
 import Toast, { DURATION } from 'react-native-easy-toast';
@@ -197,6 +198,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
   const toastRef = useRef();
   const backTimer = useRef();
   const backCallTimer = useRef();
+  console.log('timers: ', backTimer.current, backCallTimer.current)
 
   const clearTimer = () => {
     if (backTimer.current) {
@@ -231,40 +233,27 @@ export default function ScanView({ backToHome, currentMeeting }) {
 
   // 成功后显示签到成功提示（3秒后自动消失），下定时器，30秒未扫描到人脸信息，主动返回主页面
   const fetchPhoto = async (uri) => {
-    console.log('pic', uri);
+    const manipulateAsyncRes = await manipulateAsync(uri, [], { base64: true });
     const formData = new FormData();
-    formData.append('source', {
-      name: 'test',
-      type: 'multipart/form-data',
-      uri: uri,
-    });
-    // test
-    // formData.append('target', {
-    //   name: 'test1',
-    //   type: 'multipart/form-data',
-    //   uri: uri,
-    // });
-    // formData.append('target', currentMeeting.meetingUserAvatars ?? '');
-    toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
+    formData.append('sourceStr', manipulateAsyncRes.base64);
+    formData.append('pictureUrls', currentMeeting.meetingUserAvatars ?? '');
     setLoading(true);
-    const url = 'https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check';
+    toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
+    const url = 'https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check/base64';
     try {
       const res = await fetch(url, {
         method: 'POST',
-        headers: {
-          Accept: '*/*',
-          'Content-type': 'multipart/form-data',
-        },
-        body: formData
+        body: formData,
       });
       const data = await res.json();
-      console.log('fetch res', data, 'fetchPhoto - ');
+      console.log('fetchPhoto res', data);
       if (cameraType !== 'face') {
         return;
       }
-      fetchCallback();
+      fetchCallback(data.payload);
     } catch (e) {
       console.log('upload catch error: ', e)
+      fetchCallback();
     }
   };
 
@@ -292,15 +281,14 @@ export default function ScanView({ backToHome, currentMeeting }) {
 
   // TODO 处理返回数据
   const fetchCallback = (res) => {
-    // 成功 显示 3s
-    // const userName = '张三';
-    // toastRef.current?.show(<ToastView type="success" userName={userName} key="success" />, 2.5 * 1000);
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   resetBackToHomeCaller();
-    // }, 1000 * 3);
-    // 失败 显示 3s
-    toastRef.current?.show(<ToastView type="error" cameraType={cameraType} />, 3 * 1000);
+    if (res?.similar) {
+      // 成功 显示 3s
+      const userName = '张三';
+      toastRef.current?.show(<ToastView type="success" userName={userName} key="success" />, 3 * 1000);
+    } else {
+      // 失败 显示 3s
+      toastRef.current?.show(<ToastView type="error" cameraType={cameraType} />, 3 * 1000);
+    }
     backCallTimer.current = setTimeout(() => {
       setLoading(false);
       resetBackToHomeCaller();
@@ -317,7 +305,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
   // 主动拍照，将照片发送给后台进行 AI 识别
   const takePic = async () => {
     if (cameraRef.current) {
-      let photo = await cameraRef.current.takePictureAsync();
+      let photo = await cameraRef.current.takePictureAsync({ quality: 0.1 });
       fetchPhoto(photo.uri);
     }
   };
@@ -434,26 +422,26 @@ export default function ScanView({ backToHome, currentMeeting }) {
           <Text style={styles.switchButtonText}>{cameraType === 'face' ? '扫码签到' : '人脸识别'}</Text>
         </Pressable>
         {/* Todo temp */}
-        {/*<Pressable*/}
-        {/*  style={{*/}
-        {/*    paddingVertical: 14,*/}
-        {/*    width: 144,*/}
-        {/*    alignItems: 'center',*/}
-        {/*    borderWidth: 1,*/}
-        {/*    borderStyle: 'solid',*/}
-        {/*    borderColor: '#478bff',*/}
-        {/*    borderRadius: 28,*/}
-        {/*  }}*/}
-        {/*  onPress={backHomeAndClear}>*/}
-        {/*  <Text*/}
-        {/*    style={{*/}
-        {/*      lineHeight: 24,*/}
-        {/*      fontSize: 18,*/}
-        {/*      color: '#478bff',*/}
-        {/*    }}>*/}
-        {/*    返回首页*/}
-        {/*  </Text>*/}
-        {/*</Pressable>*/}
+        <Pressable
+          style={{
+            paddingVertical: 14,
+            width: 144,
+            alignItems: 'center',
+            borderWidth: 1,
+            borderStyle: 'solid',
+            borderColor: '#478bff',
+            borderRadius: 28,
+          }}
+          onPress={backHomeAndClear}>
+          <Text
+            style={{
+              lineHeight: 24,
+              fontSize: 18,
+              color: '#478bff',
+            }}>
+            返回首页
+          </Text>
+        </Pressable>
       </View>
       <Toast ref={toastRef} position="center" style={styles.toastView} />
     </View>

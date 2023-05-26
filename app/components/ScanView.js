@@ -145,7 +145,7 @@ const ToastTimer = () => {
       timer && clearInterval(timer);
     };
   }, []);
-  return <Text style={[toastStyles.text, { width: 28 }]}>{counter > 0 ? `${counter}s` : ''}</Text>;
+  return counter > 0 ? `${counter}s` : '';
 };
 
 const messageMap = {
@@ -168,8 +168,7 @@ const ToastView = ({ type, userName, cameraType }) => {
   return (
     <View style={toastStyles.container}>
       <ExpoImage source={message.icon} key={type} style={{ width: 32, height: 32 }} />
-      <Text style={toastStyles.text}>{message.title(userName, cameraType)}</Text>
-      {message.timer ? <ToastTimer /> : null}
+      <Text style={toastStyles.text}>{message.title(userName, cameraType)} {message.timer ? <ToastTimer /> : ''}</Text>
     </View>
   );
 };
@@ -183,6 +182,7 @@ const toastStyles = StyleSheet.create({
   },
   text: {
     marginLeft: 8,
+    lineHeight: 22,
     fontSize: 17,
     color: '#fff',
     fontWeight: 600,
@@ -198,7 +198,6 @@ export default function ScanView({ backToHome, currentMeeting }) {
   const toastRef = useRef();
   const backTimer = useRef();
   const backCallTimer = useRef();
-  console.log('timers: ', backTimer.current, backCallTimer.current)
 
   const clearTimer = () => {
     if (backTimer.current) {
@@ -237,6 +236,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
     const formData = new FormData();
     formData.append('sourceStr', manipulateAsyncRes.base64);
     formData.append('pictureUrls', currentMeeting.meetingUserAvatars ?? '');
+    // formData.append('userIds', currentMeeting.userIds ?? '');
     setLoading(true);
     toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     const url = 'https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check/base64';
@@ -246,7 +246,6 @@ export default function ScanView({ backToHome, currentMeeting }) {
         body: formData,
       });
       const data = await res.json();
-      console.log('fetchPhoto res', data);
       if (cameraType !== 'face') {
         return;
       }
@@ -279,11 +278,12 @@ export default function ScanView({ backToHome, currentMeeting }) {
     backToHomeCaller();
   };
 
-  // TODO 处理返回数据
+  // 处理返回数据
   const fetchCallback = (res) => {
-    if (res?.similar) {
+    if (res?.similar || res.similarity > 0.8) {
       // 成功 显示 3s
-      const userName = '张三';
+      const userNames = currentMeeting.meetingUserNames?.split(',');
+      const userName = userNames[res.index];
       toastRef.current?.show(<ToastView type="success" userName={userName} key="success" />, 3 * 1000);
     } else {
       // 失败 显示 3s
@@ -326,7 +326,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
       },
       yawAngle,
     } = face;
-    // 一些限制：脸部必须出现在视图中，面向摄像头 30 度以内 TODO 需要与后端 AI 检测联调
+    // 一些限制：脸部必须出现在视图中，面向摄像头 15 度以内
     if (x < 0 || y < 0 || yawAngle > 45) {
       setFaceBorder(undefined);
       return;

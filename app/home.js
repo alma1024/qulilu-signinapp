@@ -9,12 +9,12 @@ import { appid, secret_key, sn } from './constants';
 
 const testMeeting = {
   name: 'test1 2023年5月年中总结大会',
-  startMeetingTime: '2023-05-25T08:00:00',
-  endMeetingTime: '2023-05-25T22:00:00',
-  userIds: '1000001',
+  startMeetingTime: '2023-05-26T08:00:00',
+  endMeetingTime: '2023-05-26T22:00:00',
+  userIds: '1000001,1000001,1000001,1000001',
   meetingRoomId: '2',
-  startSignTime: '2023-05-25T08:00:00',
-  endSignTime: '2023-05-25T22:00:00',
+  startSignTime: '2023-05-26T08:00:00',
+  endSignTime: '2023-05-26T22:00:00',
   reason: null,
   status: '1',
   id: 3,
@@ -25,8 +25,8 @@ const testMeeting = {
   applicantUid: null,
   isSign: false,
   meetingRoomName: '会议室502',
-  meetingUserNames: '用户1',
-  meetingUserAvatars: "http://124.222.152.47/file/zy.jpg,https://koss.cityservice.com.cn/app/2023-05-04/6b22_tmp_39204f80ae9781b7bde544c1822d52230bc12665238aa277.jpg,https://koss.cityservice.com.cn/app/2023-05-03/fda2_tmp_b6c77501619192c63c1d36c07c529d67.jpg,https://koss.cityservice.com.cn/app/2023-05-05/2edd_tmp_67be1ceafd02cf4bb97d76c7c5c3b20fc93b64e49eee2cda.JPG",
+  meetingUserNames: '用户0,用户1,用户2,用户3',
+  meetingUserAvatars: "http://124.222.152.47/file/zh1.jpg,https://koss.cityservice.com.cn/app/2023-05-04/6b22_tmp_39204f80ae9781b7bde544c1822d52230bc12665238aa277.jpg,https://koss.cityservice.com.cn/app/2023-05-03/fda2_tmp_b6c77501619192c63c1d36c07c529d67.jpg,https://koss.cityservice.com.cn/app/2023-05-05/2edd_tmp_67be1ceafd02cf4bb97d76c7c5c3b20fc93b64e49eee2cda.JPG",
   meetingstatus: '进行中',
 };
 const testMeeting1 = {

@@ -70,6 +70,7 @@ const StatusTitle = ({ isBusy }) => {
   );
 };
 
+// 签到页面顶部：时间 + 文字
 const ScanViewHeader = ({ currentMeeting, showBar }) => {
   return (
     <View style={[scanHeaderStyles.container, { backgroundColor: 'transparent' }]}>
@@ -147,7 +148,6 @@ const ToastTimer = () => {
   }, []);
   return counter > 0 ? `${counter}s` : '';
 };
-
 const messageMap = {
   success: {
     icon: require('../images/success.svg'),
@@ -188,6 +188,30 @@ const toastStyles = StyleSheet.create({
     fontWeight: 600,
   },
 });
+
+const TempBackHome = ({ backHomeAndClear }) => {
+  return (
+    <Pressable
+      style={{
+        paddingVertical: 14,
+        width: 144,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: '#478bff',
+        borderRadius: 28,
+      }}
+      onPress={backHomeAndClear}>
+      <Text
+        style={{
+          lineHeight: 24,
+          fontSize: 18,
+          color: '#478bff',
+        }}>
+        返回首页
+      </Text>
+    </Pressable>)
+}
 
 export default function ScanView({ backToHome, currentMeeting }) {
   const [hasPermission, setHasPermission] = useState(null);
@@ -236,7 +260,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
     const formData = new FormData();
     formData.append('sourceStr', manipulateAsyncRes.base64);
     formData.append('pictureUrls', currentMeeting.meetingUserAvatars ?? '');
-    // formData.append('userIds', currentMeeting.userIds ?? '');
+    formData.append('userIds', currentMeeting.userIds ?? '');
     setLoading(true);
     toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     const url = 'https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check/base64';
@@ -251,24 +275,35 @@ export default function ScanView({ backToHome, currentMeeting }) {
       }
       fetchCallback(data.payload);
     } catch (e) {
-      console.log('upload catch error: ', e)
+      console.log('face catch error: ', e)
       fetchCallback();
     }
   };
 
+  // 二维码识别 TODO 调接口
   const fetchQr = async (qr) => {
     console.log('qr', qr);
+    const formData = new FormData();
+    formData.append('qrCode', qr);
+    formData.append('userIds', currentMeeting.userIds ?? '');
+    setLoading(true); // 通过 loading 控制是否需要识别二维码
     toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
-    setLoading(true);
-    // TODO 调接口
-    const url = `https://kapi.cityservice.com.cn/v1/app/meeting/info`; // fake
-    const res = await fetch(url);
-    const data = await res.json();
-    console.log(data, 'fetchQr - ', cameraType);
-    if (cameraType !== 'qr') {
-      return;
+    const url = `https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check/qr`; // fake
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (cameraType !== 'qr') {
+        return;
+      }
+      fetchCallback(data.payload);
+      console.log('qr res', data.payload);
+    } catch (e) {
+      console.log('qr catch error: ', e)
+      fetchCallback();
     }
-    fetchCallback();
   };
 
   const resetBackToHomeCaller = () => {
@@ -280,7 +315,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
 
   // 处理返回数据
   const fetchCallback = (res) => {
-    if (res?.similar || res.similarity > 0.8) {
+    if (res && (res.similar || res.similarity > 0.8)) {
       // 成功 显示 3s
       const userNames = currentMeeting.meetingUserNames?.split(',');
       const userName = userNames[res.index];
@@ -422,26 +457,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
           <Text style={styles.switchButtonText}>{cameraType === 'face' ? '扫码签到' : '人脸识别'}</Text>
         </Pressable>
         {/* Todo temp */}
-        <Pressable
-          style={{
-            paddingVertical: 14,
-            width: 144,
-            alignItems: 'center',
-            borderWidth: 1,
-            borderStyle: 'solid',
-            borderColor: '#478bff',
-            borderRadius: 28,
-          }}
-          onPress={backHomeAndClear}>
-          <Text
-            style={{
-              lineHeight: 24,
-              fontSize: 18,
-              color: '#478bff',
-            }}>
-            返回首页
-          </Text>
-        </Pressable>
+        {/*<TempBackHome backHomeAndClear={backHomeAndClear} />*/}
       </View>
       <Toast ref={toastRef} position="center" style={styles.toastView} />
     </View>

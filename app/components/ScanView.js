@@ -235,13 +235,13 @@ export default function ScanView({ backToHome, currentMeeting }) {
     backToHome();
   };
 
-  // 成功后显示签到成功提示（3秒后自动消失），下定时器，30秒未扫描到人脸信息，主动返回主页面
   const fetchPhoto = async (uri) => {
     const manipulateAsyncRes = await manipulateAsync(uri, [], { base64: true });
     const formData = new FormData();
     formData.append('sourceStr', manipulateAsyncRes.base64);
     formData.append('pictureUrls', currentMeeting.meetingUserAvatars ?? '');
     formData.append('userIds', currentMeeting.userIds ?? '');
+    formData.append('meetingReportId', currentMeeting.id ?? '');
     setLoading(true);
     toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     const url = 'https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check/base64';
@@ -267,6 +267,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
     const formData = new FormData();
     formData.append('qrCode', qr);
     formData.append('userIds', currentMeeting.userIds ?? '');
+    formData.append('meetingReportId', currentMeeting.id ?? '');
     setLoading(true); // 通过 loading 控制是否需要识别二维码
     toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     const url = `https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check/qr`; // fake
@@ -294,7 +295,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
     backToHomeCaller();
   };
 
-  // 处理返回数据
+  // 处理返回数据: 成功后显示签到成功提示（3秒后自动消失）
   const fetchCallback = (res) => {
     if (res && (res.similar || res.similarity > 0.8)) {
       // 成功 显示 3s

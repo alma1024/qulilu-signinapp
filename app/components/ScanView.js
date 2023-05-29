@@ -7,8 +7,6 @@ import { manipulateAsync } from 'expo-image-manipulator';
 // import { LinearGradient } from 'expo-linear-gradient';
 import { Image as ExpoImage } from 'expo-image';
 import Toast, { DURATION } from 'react-native-easy-toast';
-import * as Crypto from 'expo-crypto';
-import { appid, secret_key } from '../constants';
 import TimeView from './TimeView';
 
 // 人脸识别框
@@ -236,23 +234,6 @@ export default function ScanView({ backToHome, currentMeeting }) {
     clearTimer();
     backToHome();
   };
-
-  // 获取 secretKey
-  const [secretKey, setSecretKey] = useState('');
-  useEffect(() => {
-    const updateSecret = async () => {
-      const UUID = Crypto.randomUUID();
-      const timestamp = new Date().valueOf();
-      const tokenStr = `appid=${appid},timestamp=${timestamp},once=${UUID},secret=${secret_key}`;
-      const tokenMd5 = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.MD5, tokenStr);
-      const url = `https://kapi.cityservice.com.cn/v1/app/updateQrKey?timestamp=${timestamp}&appid=${appid}&once=${UUID}&token=${tokenMd5}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const _secretKey = data.data.list?.[0]?.qrSecretKey;
-      setSecretKey(_secretKey);
-    };
-    updateSecret();
-  }, []);
 
   // 成功后显示签到成功提示（3秒后自动消失），下定时器，30秒未扫描到人脸信息，主动返回主页面
   const fetchPhoto = async (uri) => {

@@ -9,11 +9,11 @@ import { appid, secret_key, sn } from './constants';
 
 const testMeeting = {
   name: 'test1 2023年5月年中总结大会',
-  startMeetingTime: '2023-05-26T08:00:00',
-  endMeetingTime: '2023-05-26T22:00:00',
+  startMeetingTime: '2023-05-30T08:00:00',
+  endMeetingTime: '2023-05-30T22:00:00',
   meetingRoomId: '2',
-  startSignTime: '2023-05-26T08:00:00',
-  endSignTime: '2023-05-26T22:00:00',
+  startSignTime: '2023-05-30T08:00:00',
+  endSignTime: '2023-05-30T22:00:00',
   reason: null,
   status: '1',
   id: 3,

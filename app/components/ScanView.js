@@ -187,6 +187,7 @@ const toastStyles = StyleSheet.create({
   },
 });
 
+// 测试用的返回首页按钮
 const TempBackHome = ({ backHomeAndClear }) => {
   return (
     <Pressable
@@ -254,23 +255,21 @@ export default function ScanView({ backToHome, currentMeeting }) {
       if (cameraType !== 'face') {
         return;
       }
-      fetchCallback(data.payload);
+      fetchCallback(data);
     } catch (e) {
       console.log('face catch error: ', e)
       fetchCallback();
     }
   };
 
-  // 二维码识别 TODO 调接口
+  // 二维码识别
   const fetchQr = async (qr) => {
-    console.log('qr', qr);
     const formData = new FormData();
-    formData.append('qrCode', qr);
-    formData.append('userIds', currentMeeting.userIds ?? '');
+    formData.append('qrStr', qr);
     formData.append('meetingReportId', currentMeeting.id ?? '');
     setLoading(true); // 通过 loading 控制是否需要识别二维码
     toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
-    const url = `https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check/qr`; // fake
+    const url = `https://fliot.cityservice.com.cn/face/api/v1.0/meeting/qr/singin`;
     try {
       const res = await fetch(url, {
         method: 'POST',
@@ -280,8 +279,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
       if (cameraType !== 'qr') {
         return;
       }
-      fetchCallback(data.payload);
-      console.log('qr res', data.payload);
+      fetchCallback(data);
     } catch (e) {
       console.log('qr catch error: ', e)
       fetchCallback();
@@ -297,10 +295,11 @@ export default function ScanView({ backToHome, currentMeeting }) {
 
   // 处理返回数据: 成功后显示签到成功提示（3秒后自动消失）
   const fetchCallback = (res) => {
-    if (res && (res.similar || res.similarity > 0.8)) {
+    if (res && res.code === 0 && res.payload) {
       // 成功 显示 3s
       const userNames = currentMeeting.meetingUserNames?.split(',');
-      const userName = userNames[res.index];
+      const index = currentMeeting.userIds?.split(',').findIndex(userId => userId === `${res.payload.userId}`);
+      const userName = userNames[index] ?? '';
       toastRef.current?.show(<ToastView type="success" userName={userName} key="success" />, 3 * 1000);
     } else {
       // 失败 显示 3s
@@ -344,7 +343,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
       yawAngle,
     } = face;
     // 一些限制：脸部必须出现在视图中，面向摄像头 15 度以内
-    if (x < 0 || y < 0 || yawAngle > 45) {
+    if (x < 0 || y < 0 || yawAngle > 15) {
       setFaceBorder(undefined);
       return;
     }

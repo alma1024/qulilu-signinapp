@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import RoomName from './RoomName';
 import TimeView from './TimeView';
 import { Image as ExpoImage } from 'expo-image';
@@ -14,7 +14,7 @@ const MeetingTitle = ({ data }) => {
 };
 
 const MeetingDescription = ({ data }) => {
-  const avatar = data.meetingUserAvatars ?? require('../images/avatar-white.svg');
+  const avatar = data.applicantAvatar ?? require('../images/avatar-white.svg');
   const from = getMeetingTimeStr(data.startMeetingTime);
   const to = getMeetingTimeStr(data.endMeetingTime);
   return (

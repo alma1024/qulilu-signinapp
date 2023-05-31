@@ -130,8 +130,8 @@ const styles = StyleSheet.create({
   },
   mainTitle: {
     color: '#478bff',
-    fontSize: 60,
-    lineHeight: 60,
+    fontSize: 76,
+    lineHeight: 88,
     fontFamily: 'AliShuHeiTi_Bold',
   },
   descriptionRow: {
@@ -147,9 +147,9 @@ const styles = StyleSheet.create({
   },
   description: {
     marginLeft: 8,
-    lineHeight: 28,
+    lineHeight: 30,
     color: '#fff',
-    fontSize: 21,
+    fontSize: 24,
   },
   footer: {
     position: 'absolute',

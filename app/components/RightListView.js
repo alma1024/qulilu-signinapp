@@ -18,8 +18,8 @@ const ListTitle = ({ roomIsBusy }) => {
   const title = roomIsBusy ? '正在进行的会议…' : '今天后续会议…';
   return (
     <View style={{ ...styles.iconTitleRow, marginVertical: 14 }}>
-      <ExpoImage source={icon} style={{ width: 24, height: 24 }} />
-      <Text style={{ ...styles.whiteText, lineHeight: 22, marginLeft: 4 }}>{title}</Text>
+      <ExpoImage source={icon} style={{ width: 30, height: 30 }} />
+      <Text style={{ ...styles.whiteText, lineHeight: 32, marginLeft: 4 }}>{title}</Text>
     </View>
   );
 };
@@ -32,18 +32,18 @@ const ListItem = ({ rowData, bottomBordered }) => {
     <View style={{ ...styles.listRow, borderBottomWidth: bottomBordered ? 1 : 0 }}>
       <View style={styles.iconTitleRow}>
         <ExpoImage source={require('../images/clock.svg')} style={{ width: 24, height: 24 }} />
-        <Text style={{ ...styles.whiteText, marginLeft: 6, fontSize: 21 }}>
+        <Text style={{ ...styles.whiteText, marginLeft: 6, fontSize: 24 }}>
           Today, {from} - {to}
         </Text>
       </View>
       <View style={{ width: 320, marginTop: 6 }}>
-        <Text style={{ ...styles.whiteText, fontSize: 21 }}>{rowData.name}</Text>
+        <Text style={{ ...styles.whiteText, fontSize: 24 }}>{rowData.name}</Text>
       </View>
       <View style={{ ...styles.iconTitleRow, marginTop: 16 }}>
         <View style={styles.avatarBorder}>
           <ExpoImage source={avatar} style={{ width: 32, height: 32 }} />
         </View>
-        <Text style={{ ...styles.whiteText, marginLeft: 8, lineHeight: 22 }}>创建人, {rowData.applicant}</Text>
+        <Text style={{ ...styles.whiteText, marginLeft: 8, lineHeight: 30 }}>创建人, {rowData.applicant}</Text>
       </View>
     </View>
   );
@@ -54,7 +54,7 @@ const ShowNextButton = ({ onPress, title, arrow, roomIsBusy }) => {
   return (
     <Pressable style={styles.button} onPress={onPress}>
       <Text style={styles.buttonText}>{title}</Text>
-      {roomIsBusy ? <ExpoImage source={icon} style={{ width: 24, height: 24 }} /> : null}
+      {roomIsBusy ? <ExpoImage source={icon} style={{ width: 32, height: 32 }} /> : null}
     </Pressable>
   );
 };
@@ -190,14 +190,16 @@ const styles = StyleSheet.create({
   iconTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    // backgroundColor: 'red',
     paddingVertical: 3,
     width: 320,
   },
   whiteText: {
     color: '#ABB7CC',
-    fontSize: 17,
+    fontSize: 24,
+    lineHeight: 28,
     textAlignVertical: 'center',
-    // backgroundColor: 'red'
+    // backgroundColor: 'yellow'
   },
   listRow: {
     paddingVertical: 14,
@@ -220,11 +222,13 @@ const styles = StyleSheet.create({
     padding: 0,
     elevation: 0,
     backgroundColor: 'transparent',
+    // backgroundColor: 'yellow'
   },
   buttonText: {
     marginRight: 8,
-    fontSize: 16,
-    lineHeight: 20,
+    fontSize: 22,
+    // lineHeight: 24,
+    textAlignVertical: 'bottom',
     color: '#abb7cc',
   },
   signInView: {

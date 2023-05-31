@@ -193,19 +193,21 @@ const TempBackHome = ({ backHomeAndClear }) => {
     <Pressable
       style={{
         paddingVertical: 14,
+        marginLeft: 32,
         width: 144,
         alignItems: 'center',
         borderWidth: 1,
         borderStyle: 'solid',
-        borderColor: '#478bff',
+        borderColor: '#fff',
         borderRadius: 28,
+        backgroundColor: 'rgba(255,255,255,0.2)'
       }}
       onPress={backHomeAndClear}>
       <Text
         style={{
           lineHeight: 24,
           fontSize: 18,
-          color: '#478bff',
+          color: '#fff',
         }}>
         返回首页
       </Text>
@@ -438,7 +440,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
           <Text style={styles.switchButtonText}>{cameraType === 'face' ? '扫码签到' : '人脸识别'}</Text>
         </Pressable>
         {/* Todo temp */}
-        {/*<TempBackHome backHomeAndClear={backHomeAndClear} />*/}
+        <TempBackHome backHomeAndClear={backHomeAndClear} />
       </View>
       <Toast ref={toastRef} position="center" style={styles.toastView} />
     </View>
@@ -451,6 +453,8 @@ const styles = StyleSheet.create({
   },
   switchButtonRow: {
     position: 'absolute',
+    flexDirection: 'row',
+    justifyContent: 'center',
     paddingBottom: 56,
     width: '100%',
     left: 0,

@@ -6,7 +6,6 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { manipulateAsync } from 'expo-image-manipulator';
 // import { LinearGradient } from 'expo-linear-gradient';
 import { Image as ExpoImage } from 'expo-image';
-import Toast, { DURATION } from 'react-native-easy-toast';
 import TimeView from './TimeView';
 
 // 人脸识别框
@@ -221,7 +220,6 @@ export default function ScanView({ backToHome, currentMeeting }) {
   const [toastData, setToastData] = useState({});
   const [cameraType, setCameraType] = useState('face');
   const cameraRef = useRef();
-  // const toastRef = useRef();
   const backTimer = useRef();
   const backCallTimer = useRef();
 
@@ -253,9 +251,8 @@ export default function ScanView({ backToHome, currentMeeting }) {
     // console.log('userIds: ', currentMeeting.userIds);
     // console.log('meetingReportId: ', currentMeeting.id);
     setLoading(true);
-    console.log('toastRef show loading!!!!!');
+    console.log('toast show loading!!!!!');
     setToastData({ type: 'loading' });
-    // toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     const url = 'https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check/base64';
     try {
       const res = await fetch(url, {
@@ -280,7 +277,6 @@ export default function ScanView({ backToHome, currentMeeting }) {
     formData.append('meetingReportId', currentMeeting.id ?? '');
     setLoading(true); // 通过 loading 控制是否需要识别二维码
     setToastData({ type: 'loading' });
-    // toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     const url = `https://fliot.cityservice.com.cn/face/api/v1.0/meeting/qr/singin`;
     try {
       const res = await fetch(url, {
@@ -313,11 +309,9 @@ export default function ScanView({ backToHome, currentMeeting }) {
       const index = currentMeeting.userIds?.split(',').findIndex(userId => userId === `${res.payload.userId}`);
       const userName = userNames[index] ?? '';
       setToastData({ type: 'success', userName: userName });
-      // toastRef.current?.show(<ToastView type="success" userName={userName} key="success" />, 3 * 1000);
     } else {
       // 失败 显示 3s
       setToastData({ type: 'error', cameraType: cameraType });
-      // toastRef.current?.show(<ToastView type="error" cameraType={cameraType} />, 3 * 1000);
     }
     backCallTimer.current = setTimeout(() => {
       setLoading(false);
@@ -398,7 +392,6 @@ export default function ScanView({ backToHome, currentMeeting }) {
     setCameraType(cameraType === 'face' ? 'qr' : 'face');
     setFaceBorder(undefined);
     setToastData({})
-    // toastRef.current?.close();
     setLoading(false);
     clearTimer();
   };
@@ -462,7 +455,6 @@ export default function ScanView({ backToHome, currentMeeting }) {
             <ToastView type={toastData.type} userName={toastData.userName} cameraType={toastData.cameraType} />
           </View>
         </View>)}
-      {/*<Toast ref={toastRef} position="center" style={styles.toastView} />*/}
     </View>
   );
 }

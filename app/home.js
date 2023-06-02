@@ -9,11 +9,11 @@ import { appid, secret_key, sn } from './constants';
 
 const testMeeting = {
   name: 'test1 2023年5月年中总结大会',
-  startMeetingTime: '2023-05-31T08:00:00',
-  endMeetingTime: '2023-05-31T22:00:00',
+  startMeetingTime: '2023-06-02T08:00:00',
+  endMeetingTime: '2023-06-02T22:00:00',
   meetingRoomId: '2',
-  startSignTime: '2023-05-31T08:00:00',
-  endSignTime: '2023-05-31T22:00:00',
+  startSignTime: '2023-06-02T08:00:00',
+  endSignTime: '2023-06-02T22:00:00',
   reason: null,
   status: '1',
   id: 3,
@@ -31,11 +31,11 @@ const testMeeting = {
 };
 const testMeeting1 = {
   name: 'test2 2023年5月年中总结大会',
-  startMeetingTime: '2023-05-31T18:00:00',
-  endMeetingTime: '2023-05-31T19:00:00',
+  startMeetingTime: '2023-06-02T18:00:00',
+  endMeetingTime: '2023-06-02T19:00:00',
   meetingRoomId: '2',
-  startSignTime: '2023-05-31T13:00:00',
-  endSignTime: '2023-05-31T19:00:00',
+  startSignTime: '2023-06-02T13:00:00',
+  endSignTime: '2023-06-02T19:00:00',
   reason: null,
   status: '1',
   id: 4,
@@ -75,8 +75,8 @@ export default function Home({ navigation }) {
         console.log('data.error: ', data);
       } else if (data.data) {
         // console.log(JSON.stringify(data, null, 4))
-        const meetingListData = data.data;
-        // const meetingListData = [testMeeting, testMeeting1].concat(data.data); // for test
+        // const meetingListData = data.data;
+        const meetingListData = [testMeeting, testMeeting1].concat(data.data); // for test
         // const meetingListData = data.data.concat([testMeeting, testMeeting1]); // for test
         const now = new Date().valueOf();
         const currentMeetingData = meetingListData.find(

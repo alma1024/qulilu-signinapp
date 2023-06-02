@@ -239,13 +239,19 @@ export default function ScanView({ backToHome, currentMeeting }) {
   };
 
   const fetchPhoto = async (uri) => {
+    console.log('fetchPhoto uri: ', uri);
     const manipulateAsyncRes = await manipulateAsync(uri, [], { base64: true });
     const formData = new FormData();
     formData.append('sourceStr', manipulateAsyncRes.base64);
     formData.append('pictureUrls', currentMeeting.meetingUserAvatars ?? '');
     formData.append('userIds', currentMeeting.userIds ?? '');
     formData.append('meetingReportId', currentMeeting.id ?? '');
+    console.log('sourceStr base64 20位: ', manipulateAsyncRes.base64.slice(0, 20));
+    console.log('pictureUrls: ', currentMeeting.meetingUserAvatars);
+    console.log('userIds: ', currentMeeting.userIds);
+    console.log('meetingReportId: ', currentMeeting.id);
     setLoading(true);
+    console.log('toastRef show loading!!!!!');
     toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     const url = 'https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check/base64';
     try {
@@ -297,11 +303,16 @@ export default function ScanView({ backToHome, currentMeeting }) {
 
   // 处理返回数据: 成功后显示签到成功提示（3秒后自动消失）
   const fetchCallback = (res) => {
+    console.log('fetchCallback res: ', res);
     if (res && res.code === 0 && res.payload) {
+      console.log('meetingUserNames: ', currentMeeting.meetingUserNames);
+      console.log('userIds: ', currentMeeting.userIds);
+      console.log('payload.userId: ', res.payload.userId);
       // 成功 显示 3s
       const userNames = currentMeeting.meetingUserNames?.split(',');
       const index = currentMeeting.userIds?.split(',').findIndex(userId => userId === `${res.payload.userId}`);
       const userName = userNames[index] ?? '';
+      console.log('userName: ', userName);
       toastRef.current?.show(<ToastView type="success" userName={userName} key="success" />, 3 * 1000);
     } else {
       // 失败 显示 3s
@@ -398,7 +409,7 @@ export default function ScanView({ backToHome, currentMeeting }) {
   }, []);
 
   if (!hasPermission) {
-    return <Text>No access to camera</Text>;
+    return <View style={styles.scanView}><Text>No access to camera</Text></View>;
   }
   return (
     <View style={styles.scanView}>

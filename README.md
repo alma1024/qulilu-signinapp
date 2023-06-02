@@ -33,6 +33,11 @@ https://docs.expo.dev/build-reference/apk/
 eas build -p android --profile preview
 ```
 
+打包 debug 版本
+```sh
+eas build -p android --profile preview1
+```
+
 ## 📝 Notes
 
 - [Expo Router: Docs](https://expo.github.io/router)

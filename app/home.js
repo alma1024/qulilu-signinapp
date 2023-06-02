@@ -75,8 +75,8 @@ export default function Home({ navigation }) {
         console.log('data.error: ', data);
       } else if (data.data) {
         // console.log(JSON.stringify(data, null, 4))
-        // const meetingListData = data.data;
-        const meetingListData = [testMeeting, testMeeting1].concat(data.data); // for test
+        const meetingListData = data.data;
+        // const meetingListData = [testMeeting, testMeeting1].concat(data.data); // for test
         // const meetingListData = data.data.concat([testMeeting, testMeeting1]); // for test
         const now = new Date().valueOf();
         const currentMeetingData = meetingListData.find(

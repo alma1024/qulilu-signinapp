@@ -38,6 +38,29 @@ eas build -p android --profile preview
 eas build -p android --profile preview1
 ```
 
+## expo 生成 android 配置
+
+```sh
+npx expo run:android
+```
+
+## 本地打包
+
+```sh
+cd android
+./gradlew assembleRelease
+```
+
+## 将本地打包产物安装到通过USB连接的设备上
+
+```sh
+cd android/app/build/outputs/apk/release
+adb install app-release.apk
+
+cd android/app/build/outputs/apk/debug
+adb install app-debug.apk
+```
+
 ## 📝 Notes
 
 - [Expo Router: Docs](https://expo.github.io/router)

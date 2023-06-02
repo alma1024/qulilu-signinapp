@@ -218,9 +218,10 @@ export default function ScanView({ backToHome, currentMeeting }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [faceBorder, setFaceBorder] = useState();
   const [loading, setLoading] = useState(false);
+  const [toastData, setToastData] = useState({});
   const [cameraType, setCameraType] = useState('face');
   const cameraRef = useRef();
-  const toastRef = useRef();
+  // const toastRef = useRef();
   const backTimer = useRef();
   const backCallTimer = useRef();
 
@@ -235,24 +236,26 @@ export default function ScanView({ backToHome, currentMeeting }) {
 
   const backHomeAndClear = () => {
     clearTimer();
+    setToastData({});
     backToHome();
   };
 
   const fetchPhoto = async (uri) => {
-    console.log('fetchPhoto uri: ', uri);
+    // console.log('fetchPhoto uri: ', uri);
     const manipulateAsyncRes = await manipulateAsync(uri, [], { base64: true });
     const formData = new FormData();
     formData.append('sourceStr', manipulateAsyncRes.base64);
     formData.append('pictureUrls', currentMeeting.meetingUserAvatars ?? '');
     formData.append('userIds', currentMeeting.userIds ?? '');
     formData.append('meetingReportId', currentMeeting.id ?? '');
-    console.log('sourceStr base64 20位: ', manipulateAsyncRes.base64.slice(0, 20));
-    console.log('pictureUrls: ', currentMeeting.meetingUserAvatars);
-    console.log('userIds: ', currentMeeting.userIds);
-    console.log('meetingReportId: ', currentMeeting.id);
+    // console.log('sourceStr base64 20位: ', manipulateAsyncRes.base64.slice(0, 20));
+    // console.log('pictureUrls: ', currentMeeting.meetingUserAvatars);
+    // console.log('userIds: ', currentMeeting.userIds);
+    // console.log('meetingReportId: ', currentMeeting.id);
     setLoading(true);
     console.log('toastRef show loading!!!!!');
-    toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
+    setToastData({ type: 'loading' });
+    // toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     const url = 'https://fliot.cityservice.com.cn/face/api/v1.0/face/meeting-user-check/base64';
     try {
       const res = await fetch(url, {
@@ -276,7 +279,8 @@ export default function ScanView({ backToHome, currentMeeting }) {
     formData.append('qrStr', qr);
     formData.append('meetingReportId', currentMeeting.id ?? '');
     setLoading(true); // 通过 loading 控制是否需要识别二维码
-    toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
+    setToastData({ type: 'loading' });
+    // toastRef.current?.show(<ToastView type="loading" />, DURATION.FOREVER);
     const url = `https://fliot.cityservice.com.cn/face/api/v1.0/meeting/qr/singin`;
     try {
       const res = await fetch(url, {
@@ -303,23 +307,21 @@ export default function ScanView({ backToHome, currentMeeting }) {
 
   // 处理返回数据: 成功后显示签到成功提示（3秒后自动消失）
   const fetchCallback = (res) => {
-    console.log('fetchCallback res: ', res);
     if (res && res.code === 0 && res.payload) {
-      console.log('meetingUserNames: ', currentMeeting.meetingUserNames);
-      console.log('userIds: ', currentMeeting.userIds);
-      console.log('payload.userId: ', res.payload.userId);
       // 成功 显示 3s
       const userNames = currentMeeting.meetingUserNames?.split(',');
       const index = currentMeeting.userIds?.split(',').findIndex(userId => userId === `${res.payload.userId}`);
       const userName = userNames[index] ?? '';
-      console.log('userName: ', userName);
-      toastRef.current?.show(<ToastView type="success" userName={userName} key="success" />, 3 * 1000);
+      setToastData({ type: 'success', userName: userName });
+      // toastRef.current?.show(<ToastView type="success" userName={userName} key="success" />, 3 * 1000);
     } else {
       // 失败 显示 3s
-      toastRef.current?.show(<ToastView type="error" cameraType={cameraType} />, 3 * 1000);
+      setToastData({ type: 'error', cameraType: cameraType });
+      // toastRef.current?.show(<ToastView type="error" cameraType={cameraType} />, 3 * 1000);
     }
     backCallTimer.current = setTimeout(() => {
       setLoading(false);
+      setToastData({});
       resetBackToHomeCaller();
     }, 1000 * 3);
   };
@@ -395,7 +397,8 @@ export default function ScanView({ backToHome, currentMeeting }) {
   const switchCameraType = () => {
     setCameraType(cameraType === 'face' ? 'qr' : 'face');
     setFaceBorder(undefined);
-    toastRef.current?.close();
+    setToastData({})
+    // toastRef.current?.close();
     setLoading(false);
     clearTimer();
   };
@@ -453,7 +456,13 @@ export default function ScanView({ backToHome, currentMeeting }) {
         {/* Todo temp */}
         <TempBackHome backHomeAndClear={backHomeAndClear} />
       </View>
-      <Toast ref={toastRef} position="center" style={styles.toastView} />
+      {toastData.type && (
+        <View style={styles.toastViewContainer}>
+          <View style={styles.toastView}>
+            <ToastView type={toastData.type} userName={toastData.userName} cameraType={toastData.cameraType} />
+          </View>
+        </View>)}
+      {/*<Toast ref={toastRef} position="center" style={styles.toastView} />*/}
     </View>
   );
 }
@@ -484,6 +493,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 500,
     color: '#293f66',
+  },
+  toastViewContainer: {
+    position: 'absolute',
+    left: 0,
+    top: '50%',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   toastView: {
     padding: 0,
